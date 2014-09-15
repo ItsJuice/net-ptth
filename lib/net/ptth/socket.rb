@@ -15,8 +15,8 @@ class Net::PTTH
       begin
         raw_socket.write(data)
       rescue Errno::EPIPE => e
-        close unless open?
-
+        refresh_socket
+ 
         retry_count -= 1
         if retry_count > 0
           retry
@@ -24,6 +24,11 @@ class Net::PTTH
           raise SocketError.new("Couldn't reconnect! Errno::EPIPE")
         end
       end
+    end
+
+    def refresh_socket
+      close unless open?
+      @_socket = nil
     end
 
     def close
@@ -39,7 +44,6 @@ class Net::PTTH
     private
 
     def close_socket
-      @_socket = nil
       raw_socket.close
     end
 
