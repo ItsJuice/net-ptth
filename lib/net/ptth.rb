@@ -47,11 +47,16 @@ class Net::PTTH
                        end
   end
 
+  def cleanup
+    close
+  end
+
   # Public: Closes de current connection
   #
   def close
     @keep_alive = false
     socket.close if socket.open?
+    @_socket.terminate
     @_socket = nil
   end
 
